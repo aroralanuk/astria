@@ -1,15 +1,21 @@
 use std::sync::Arc;
 
-use anyhow::{Context, Result};
-use tendermint::abci::request::{BeginBlock, EndBlock};
+use anyhow::{
+    Context,
+    Result,
+};
+use tendermint::abci::request::{
+    BeginBlock,
+    EndBlock,
+};
 use tracing::instrument;
 
 use super::state_ext::StateWriteExt;
-use crate::{asset::get_native_asset, component::Component, genesis::GenesisState};
-
-/// Default transfer base fee.
-/// TODO: put in app genesis state
-pub(crate) const DEFAULT_TRANSFER_BASE_FEE: u128 = 12;
+use crate::{
+    asset::get_native_asset,
+    component::Component,
+    genesis::GenesisState,
+};
 
 #[derive(Default)]
 pub(crate) struct AccountsComponent;
@@ -28,7 +34,7 @@ impl Component for AccountsComponent {
         }
 
         state
-            .put_transfer_base_fee(DEFAULT_TRANSFER_BASE_FEE)
+            .put_transfer_base_fee(app_state.fees.transfer_base_fee)
             .context("failed to put transfer base fee")?;
         Ok(())
     }

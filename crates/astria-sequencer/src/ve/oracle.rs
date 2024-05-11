@@ -28,7 +28,7 @@ pub struct Oracle {
 
 // Implement the Oracle struct
 impl Oracle {
-     // Create a new instance of Oracle
+    // Create a new instance of Oracle
     pub fn new(provider_urls: &[&str]) -> Self {
         let providers = provider_urls
             .iter()

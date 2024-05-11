@@ -1,7 +1,15 @@
 use astria_core::{
-    primitive::v1::{asset::DEFAULT_NATIVE_ASSET_DENOM, Address, RollupId, ADDRESS_LEN},
+    primitive::v1::{
+        asset::DEFAULT_NATIVE_ASSET_DENOM,
+        Address,
+        RollupId,
+        ADDRESS_LEN,
+    },
     protocol::transaction::v1alpha1::{
-        action::SequenceAction, SignedTransaction, TransactionParams, UnsignedTransaction,
+        action::SequenceAction,
+        SignedTransaction,
+        TransactionParams,
+        UnsignedTransaction,
     },
 };
 use cnidarium::Storage;
@@ -10,7 +18,11 @@ use penumbra_ibc::params::IBCParameters;
 
 use crate::{
     app::App,
-    genesis::{Account, GenesisState},
+    genesis::{
+        self,
+        Account,
+        GenesisState,
+    },
     mempool::Mempool,
 };
 
@@ -54,6 +66,17 @@ pub(crate) fn default_genesis_accounts() -> Vec<Account> {
     ]
 }
 
+pub(crate) fn default_fees() -> genesis::Fees {
+    genesis::Fees {
+        transfer_base_fee: 12,
+        sequence_base_fee: 32,
+        sequence_byte_cost_multiplier: 1,
+        init_bridge_account_base_fee: 48,
+        bridge_lock_byte_cost_multiplier: 1,
+        ics20_withdrawal_base_fee: 24,
+    }
+}
+
 pub(crate) async fn initialize_app_with_storage(
     genesis_state: Option<GenesisState>,
     genesis_validators: Vec<tendermint::validator::Update>,
@@ -73,6 +96,7 @@ pub(crate) async fn initialize_app_with_storage(
         native_asset_base_denomination: DEFAULT_NATIVE_ASSET_DENOM.to_string(),
         ibc_params: IBCParameters::default(),
         allowed_fee_assets: vec![DEFAULT_NATIVE_ASSET_DENOM.to_owned().into()],
+        fees: default_fees(),
     });
 
     app.init_chain(
@@ -103,12 +127,14 @@ pub(crate) fn get_mock_tx(nonce: u32) -> SignedTransaction {
             nonce,
             chain_id: "test".to_string(),
         },
-        actions: vec![SequenceAction {
-            rollup_id: RollupId::from_unhashed_bytes([0; 32]),
-            data: vec![0x99],
-            fee_asset_id: astria_core::primitive::v1::asset::default_native_asset_id(),
-        }
-        .into()],
+        actions: vec![
+            SequenceAction {
+                rollup_id: RollupId::from_unhashed_bytes([0; 32]),
+                data: vec![0x99],
+                fee_asset_id: astria_core::primitive::v1::asset::default_native_asset_id(),
+            }
+            .into(),
+        ],
     };
 
     tx.into_signed(&alice_signing_key)

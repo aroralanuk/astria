@@ -5,17 +5,30 @@ use std::fmt;
 pub(crate) use action_handler::ActionHandler;
 #[cfg(not(feature = "mint"))]
 use anyhow::bail;
-use anyhow::{ensure, Context as _};
+use anyhow::{
+    ensure,
+    Context as _,
+};
 use astria_core::{
     primitive::v1::Address,
-    protocol::transaction::v1alpha1::{action::Action, SignedTransaction, UnsignedTransaction},
+    protocol::transaction::v1alpha1::{
+        action::Action,
+        SignedTransaction,
+        UnsignedTransaction,
+    },
 };
 use tracing::instrument;
 
 use crate::{
-    accounts::state_ext::{StateReadExt, StateWriteExt},
+    accounts::state_ext::{
+        StateReadExt,
+        StateWriteExt,
+    },
     bridge::state_ext::StateReadExt as _,
-    ibc::{host_interface::AstriaHost, state_ext::StateReadExt as _},
+    ibc::{
+        host_interface::AstriaHost,
+        state_ext::StateReadExt as _,
+    },
     state_ext::StateReadExt as _,
 };
 
@@ -452,11 +465,18 @@ impl ActionHandler for UnsignedTransaction {
 mod test {
     use astria_core::{
         primitive::v1::{
-            asset::{Denom, DEFAULT_NATIVE_ASSET_DENOM},
-            RollupId, ADDRESS_LEN,
+            asset::{
+                Denom,
+                DEFAULT_NATIVE_ASSET_DENOM,
+            },
+            RollupId,
+            ADDRESS_LEN,
         },
         protocol::transaction::v1alpha1::{
-            action::{SequenceAction, TransferAction},
+            action::{
+                SequenceAction,
+                TransferAction,
+            },
             TransactionParams,
         },
     };
@@ -464,8 +484,10 @@ mod test {
 
     use super::*;
     use crate::{
-        accounts::state_ext::StateWriteExt as _, app::test_utils::*,
-        bridge::state_ext::StateWriteExt, ibc::state_ext::StateWriteExt as _,
+        accounts::state_ext::StateWriteExt as _,
+        app::test_utils::*,
+        bridge::state_ext::StateWriteExt,
+        ibc::state_ext::StateWriteExt as _,
         sequence::state_ext::StateWriteExt as _,
     };
 
@@ -475,9 +497,7 @@ mod test {
         let snapshot = storage.latest_snapshot();
         let mut state_tx = StateDelta::new(snapshot);
 
-        state_tx
-            .put_transfer_base_fee(crate::accounts::component::DEFAULT_TRANSFER_BASE_FEE)
-            .unwrap();
+        state_tx.put_transfer_base_fee(12).unwrap();
         state_tx.put_sequence_action_base_fee(0);
         state_tx.put_sequence_action_byte_cost_multiplier(1);
         state_tx.put_ics20_withdrawal_base_fee(1).unwrap();
@@ -526,7 +546,10 @@ mod test {
             nonce: 0,
             chain_id: "test-chain-id".to_string(),
         };
-        let tx = UnsignedTransaction { actions, params };
+        let tx = UnsignedTransaction {
+            actions,
+            params,
+        };
 
         let signed_tx = tx.into_signed(&alice_signing_key);
         check_balance_mempool(&signed_tx, &state_tx)
@@ -540,9 +563,7 @@ mod test {
         let snapshot = storage.latest_snapshot();
         let mut state_tx = StateDelta::new(snapshot);
 
-        state_tx
-            .put_transfer_base_fee(crate::accounts::component::DEFAULT_TRANSFER_BASE_FEE)
-            .unwrap();
+        state_tx.put_transfer_base_fee(12).unwrap();
         state_tx.put_sequence_action_base_fee(0);
         state_tx.put_sequence_action_byte_cost_multiplier(1);
         state_tx.put_ics20_withdrawal_base_fee(1).unwrap();
@@ -587,7 +608,10 @@ mod test {
             nonce: 0,
             chain_id: "test-chain-id".to_string(),
         };
-        let tx = UnsignedTransaction { actions, params };
+        let tx = UnsignedTransaction {
+            actions,
+            params,
+        };
 
         let signed_tx = tx.into_signed(&alice_signing_key);
         let err = check_balance_mempool(&signed_tx, &state_tx)

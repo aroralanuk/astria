@@ -1,6 +1,12 @@
-use astria_core::primitive::v1::{asset, Address};
+use astria_core::primitive::v1::{
+    asset,
+    Address,
+};
 use penumbra_ibc::params::IBCParameters;
-use serde::{Deserialize, Deserializer};
+use serde::{
+    Deserialize,
+    Deserializer,
+};
 
 /// The genesis state for the application.
 #[derive(Debug, Deserialize)]
@@ -16,6 +22,17 @@ pub(crate) struct GenesisState {
     pub(crate) ibc_params: IBCParameters,
     #[serde(deserialize_with = "deserialize_assets")]
     pub(crate) allowed_fee_assets: Vec<asset::Denom>,
+    pub(crate) fees: Fees,
+}
+
+#[derive(Debug, Deserialize)]
+pub(crate) struct Fees {
+    pub(crate) transfer_base_fee: u128,
+    pub(crate) sequence_base_fee: u128,
+    pub(crate) sequence_byte_cost_multiplier: u128,
+    pub(crate) init_bridge_account_base_fee: u128,
+    pub(crate) bridge_lock_byte_cost_multiplier: u128,
+    pub(crate) ics20_withdrawal_base_fee: u128,
 }
 
 #[derive(Debug, Deserialize)]
@@ -94,6 +111,14 @@ mod test {
                 "ibc_enabled": true,
                 "inbound_ics20_transfers_enabled": true,
                 "outbound_ics20_transfers_enabled": true
+            },
+            "fees": {
+                "transfer_base_fee": 12,
+                "sequence_base_fee": 32,
+                "sequence_byte_cost_multiplier": 1,
+                "init_bridge_account_base_fee": 48,
+                "bridge_lock_byte_cost_multiplier": 1,
+                "ics20_withdrawal_base_fee": 24
             },
             "native_asset_base_denomination": "nria",
             "allowed_fee_assets": ["nria"]

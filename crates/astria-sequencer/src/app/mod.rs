@@ -56,7 +56,10 @@ use crate::{
     sequence::component::SequenceComponent,
     state_ext::{StateReadExt as _, StateWriteExt as _},
     transaction::{self, InvalidNonce},
-    ve::{types::OracleVoteExtension,oracle::{ProviderConfig, Oracle}},
+    ve::{
+        oracle::{Oracle, ProviderConfig},
+        types::OracleVoteExtension,
+    },
 };
 
 /// The inter-block state being written to by the application.
@@ -970,11 +973,9 @@ impl App {
         let mut state_tx = StateDelta::new(self.state.clone());
         let mut arc_state_tx = Arc::new(state_tx);
 
-        let provider_urls = &[
-        "https://api.seatgeek.com/2/events/6109434"
-    ];
+        let provider_urls = &["https://api.seatgeek.com/2/events/6109434"];
 
-    let oracle = Oracle::new(provider_urls);
+        let oracle = Oracle::new(provider_urls);
 
         // Fetch prices from the providers
         oracle.fetch_prices().await;
