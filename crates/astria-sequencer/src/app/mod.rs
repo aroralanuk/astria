@@ -3,46 +3,87 @@ pub(crate) mod test_utils;
 #[cfg(test)]
 mod tests_app;
 #[cfg(test)]
+mod tests_breaking_changes;
+#[cfg(test)]
 mod tests_execute_transaction;
 
-use std::{collections::VecDeque, sync::Arc};
+use std::{
+    collections::VecDeque,
+    sync::Arc,
+};
 
-use anyhow::{anyhow, ensure, Context};
+use anyhow::{
+    anyhow,
+    ensure,
+    Context,
+};
 use astria_core::{
     generated::protocol::transaction::v1alpha1 as raw,
     primitive::v1::Address,
     protocol::{
         abci::AbciErrorCode,
-        transaction::v1alpha1::{Action, SignedTransaction},
+        transaction::v1alpha1::{
+            Action,
+            SignedTransaction,
+        },
     },
     sequencerblock::v1alpha1::block::SequencerBlock,
 };
-use bytes::Bytes;
-use cnidarium::{ArcStateDeltaExt, Snapshot, StagedWriteBatch, StateDelta, Storage};
+use cnidarium::{
+    ArcStateDeltaExt,
+    Snapshot,
+    StagedWriteBatch,
+    StateDelta,
+    Storage,
+};
 use prost::Message as _;
-use sha2::{Digest as _, Sha256};
+use sha2::{
+    Digest as _,
+    Sha256,
+};
 use telemetry::display::json;
 use tendermint::{
-    abci::{self, types::ExecTxResult, Event},
+    abci::{
+        self,
+        types::ExecTxResult,
+        Event,
+    },
     account,
     block::Header,
-    AppHash, Hash,
+    AppHash,
+    Hash,
 };
-use tracing::{debug, info, instrument};
+use tracing::{
+    debug,
+    info,
+    instrument,
+};
 
 use crate::{
     accounts::{
         component::AccountsComponent,
-        state_ext::{StateReadExt, StateWriteExt as _},
+        state_ext::{
+            StateReadExt,
+            StateWriteExt as _,
+        },
     },
     api_state_ext::StateWriteExt as _,
     authority::{
-        component::{AuthorityComponent, AuthorityComponentAppState},
-        state_ext::{StateReadExt as _, StateWriteExt as _},
+        component::{
+            AuthorityComponent,
+            AuthorityComponentAppState,
+        },
+        state_ext::{
+            StateReadExt as _,
+            StateWriteExt as _,
+        },
     },
     bridge::{
         component::BridgeComponent,
-        state_ext::{StateReadExt as _, StateWriteExt},
+        state_ext::{
+            StateReadExt as _,
+            StateWriteExt,
+        },
     },
     component::Component as _,
     genesis::GenesisState,
@@ -51,14 +92,19 @@ use crate::{
     metrics_init,
     proposal::{
         block_size_constraints::BlockSizeConstraints,
-        commitment::{generate_rollup_datas_commitment, GeneratedCommitments},
+        commitment::{
+            generate_rollup_datas_commitment,
+            GeneratedCommitments,
+        },
     },
     sequence::component::SequenceComponent,
-    state_ext::{StateReadExt as _, StateWriteExt as _},
-    transaction::{self, InvalidNonce},
-    ve::{
-        oracle::{Oracle, ProviderConfig},
-        types::OracleVoteExtension,
+    state_ext::{
+        StateReadExt as _,
+        StateWriteExt as _,
+    },
+    transaction::{
+        self,
+        InvalidNonce,
     },
 };
 

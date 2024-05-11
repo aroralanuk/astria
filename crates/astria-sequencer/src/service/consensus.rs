@@ -1,12 +1,33 @@
-use anyhow::{bail, Context};
+use anyhow::{
+    bail,
+    Context,
+};
 use cnidarium::Storage;
-use tendermint::v0_38::abci::{request, response, ConsensusRequest, ConsensusResponse};
+use tendermint::v0_38::abci::{
+    request,
+    response,
+    ConsensusRequest,
+    ConsensusResponse,
+};
 use tokio::sync::mpsc;
 use tower_abci::BoxError;
 use tower_actor::Message;
-use tracing::{instrument, warn, Instrument};
+use tracing::{
+    instrument,
+    warn,
+    Instrument,
+};
 
-use crate::{app::App, genesis::GenesisState};
+use crate::{
+    app::App,
+    genesis::GenesisState,
+};
+
+pub(crate) struct Consensus {
+    queue: mpsc::Receiver<Message<ConsensusRequest, ConsensusResponse, tower::BoxError>>,
+    storage: Storage,
+    app: App,
+}
 
 pub(crate) struct Consensus {
     queue: mpsc::Receiver<Message<ConsensusRequest, ConsensusResponse, tower::BoxError>>,
@@ -209,24 +230,44 @@ impl Consensus {
 
 #[cfg(test)]
 mod test {
-    use std::{collections::HashMap, str::FromStr};
+    use std::{
+        collections::HashMap,
+        str::FromStr,
+    };
 
     use astria_core::{
-        primitive::v1::{asset::DEFAULT_NATIVE_ASSET_DENOM, Address, RollupId},
+        primitive::v1::{
+            asset::DEFAULT_NATIVE_ASSET_DENOM,
+            Address,
+            RollupId,
+        },
         protocol::transaction::v1alpha1::{
-            action::SequenceAction, TransactionParams, UnsignedTransaction,
+            action::SequenceAction,
+            TransactionParams,
+            UnsignedTransaction,
         },
     };
     use bytes::Bytes;
-    use ed25519_consensus::{SigningKey, VerificationKey};
+    use ed25519_consensus::{
+        SigningKey,
+        VerificationKey,
+    };
     use prost::Message as _;
     use rand::rngs::OsRng;
-    use tendermint::{account::Id, Hash, Time};
+    use tendermint::{
+        account::Id,
+        Hash,
+        Time,
+    };
 
     use super::*;
     use crate::{
+        app::test_utils::default_fees,
         asset::get_native_asset,
-        mempool::{Mempool, TransactionPriority},
+        mempool::{
+            Mempool,
+            TransactionPriority,
+        },
         proposal::commitment::generate_rollup_datas_commitment,
     };
 
