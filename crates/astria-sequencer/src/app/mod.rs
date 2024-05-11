@@ -991,7 +991,7 @@ impl App {
         //     proposer_address: extend_vote.proposer_address,
         // };
 
-        let oracleExtension: OracleVoteExtension;
+        let oracle_extension: OracleVoteExtension;
 
         // let state_tx = Arc::try_unwrap(arc_state_tx)
         //     .expect("components should not retain copies of shared state");

@@ -34,6 +34,7 @@ impl Consensus {
             span,
         }) = self.queue.recv().await
         {
+            println!("Consensus::run {:?}", req);
             // The send only fails if the receiver was dropped, which happens
             // if the caller didn't propagate the message back to tendermint
             // for some reason -- but that's not our problem.
@@ -156,6 +157,7 @@ impl Consensus {
         &mut self,
         extend_vote: request::ExtendVote,
     ) -> anyhow::Result<response::ExtendVote> {
+        println!("handle_extend_vote {:?}", extend_vote);
         self.app
             .extend_vote(extend_vote, self.storage.clone())
             .await

@@ -49,7 +49,7 @@ impl Oracle {
         for provider in &self.providers {
             // Make the API call to fetch prices from the provider
             let response = self.client.get(&provider.url).send().await;
-
+            println!("oracle response: {:?}", response);
             // Parse the response and update the prices map
             if let Ok(response) = response {
                 if let Ok(provider_prices) = response.json::<HashMap<String, String>>().await {
