@@ -1,7 +1,11 @@
 use std::collections::HashMap;
 
 use bytes::Bytes;
-use prost::{DecodeError, EncodeError, Message};
+use prost::{
+    DecodeError,
+    EncodeError,
+    Message,
+};
 
 /// OracleVoteExtension represents the vote extension structure for oracle prices.
 /// It contains a map of currency pair IDs to their corresponding price bytes.

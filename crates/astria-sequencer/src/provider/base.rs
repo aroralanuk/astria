@@ -1,12 +1,14 @@
-use reqwest::{ RequestBuilder, Response};
 use async_trait::async_trait;
 use derive_new::new;
+use reqwest::{
+    RequestBuilder,
+    Response,
+};
 
 #[derive(Debug, Clone, new)]
 pub enum AuthMethod {
     BasicAuth { username: String, password: String },
     ApiKey { key: String },
-
 }
 
 #[derive(Debug, Clone)]

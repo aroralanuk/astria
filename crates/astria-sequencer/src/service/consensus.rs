@@ -271,12 +271,14 @@ mod test {
                 nonce: 0,
                 chain_id: "test".to_string(),
             },
-            actions: vec![SequenceAction {
-                rollup_id: RollupId::from_unhashed_bytes(b"testchainid"),
-                data: b"helloworld".to_vec(),
-                fee_asset_id: get_native_asset().id(),
-            }
-            .into()],
+            actions: vec![
+                SequenceAction {
+                    rollup_id: RollupId::from_unhashed_bytes(b"testchainid"),
+                    data: b"helloworld".to_vec(),
+                    fee_asset_id: get_native_asset().id(),
+                }
+                .into(),
+            ],
         }
     }
 
@@ -362,26 +364,30 @@ mod test {
     async fn process_proposal_fail_missing_action_commitment() {
         let (mut consensus_service, _) = new_consensus_service(None).await;
         let process_proposal = new_process_proposal_request(vec![]);
-        assert!(consensus_service
-            .handle_process_proposal(process_proposal)
-            .await
-            .err()
-            .unwrap()
-            .to_string()
-            .contains("no transaction commitment in proposal"));
+        assert!(
+            consensus_service
+                .handle_process_proposal(process_proposal)
+                .await
+                .err()
+                .unwrap()
+                .to_string()
+                .contains("no transaction commitment in proposal")
+        );
     }
 
     #[tokio::test]
     async fn process_proposal_fail_wrong_commitment_length() {
         let (mut consensus_service, _) = new_consensus_service(None).await;
         let process_proposal = new_process_proposal_request(vec![[0u8; 16].to_vec().into()]);
-        assert!(consensus_service
-            .handle_process_proposal(process_proposal)
-            .await
-            .err()
-            .unwrap()
-            .to_string()
-            .contains("transaction commitment must be 32 bytes"));
+        assert!(
+            consensus_service
+                .handle_process_proposal(process_proposal)
+                .await
+                .err()
+                .unwrap()
+                .to_string()
+                .contains("transaction commitment must be 32 bytes")
+        );
     }
 
     #[tokio::test]
@@ -391,13 +397,15 @@ mod test {
             [99u8; 32].to_vec().into(),
             [99u8; 32].to_vec().into(),
         ]);
-        assert!(consensus_service
-            .handle_process_proposal(process_proposal)
-            .await
-            .err()
-            .unwrap()
-            .to_string()
-            .contains("transaction commitment does not match expected"));
+        assert!(
+            consensus_service
+                .handle_process_proposal(process_proposal)
+                .await
+                .err()
+                .unwrap()
+                .to_string()
+                .contains("transaction commitment does not match expected")
+        );
     }
 
     #[tokio::test]
@@ -435,13 +443,19 @@ mod test {
     fn default_header() -> tendermint::block::Header {
         use tendermint::{
             account,
-            block::{header::Version, Height},
+            block::{
+                header::Version,
+                Height,
+            },
             chain,
             hash::AppHash,
         };
 
         tendermint::block::Header {
-            version: Version { block: 0, app: 0 },
+            version: Version {
+                block: 0,
+                app: 0,
+            },
             chain_id: chain::Id::try_from("test").unwrap(),
             height: Height::from(1u32),
             time: Time::now(),

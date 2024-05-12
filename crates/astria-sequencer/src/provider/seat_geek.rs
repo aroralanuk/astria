@@ -1,17 +1,26 @@
-use reqwest::{Client, RequestBuilder, Response};
 use std::collections::HashMap;
-use tokio::sync::RwLock;
-use async_trait::async_trait;
-use serde_json::Value;
-use derive_new::new;
 
-use super::base::{AuthMethod, ProviderConfig, ProviderHandler, ProviderResponse};
+use async_trait::async_trait;
+use derive_new::new;
+use reqwest::{
+    Client,
+    RequestBuilder,
+    Response,
+};
+use serde_json::Value;
+use tokio::sync::RwLock;
+
+use super::base::{
+    AuthMethod,
+    ProviderConfig,
+    ProviderHandler,
+    ProviderResponse,
+};
 
 #[derive(Clone, Debug, new)]
 struct SeatGeekHandler {
     config: ProviderConfig,
 }
-
 
 #[async_trait]
 impl ProviderHandler for SeatGeekHandler {
@@ -21,9 +30,10 @@ impl ProviderHandler for SeatGeekHandler {
 
     async fn authenticate(&self, request: RequestBuilder) -> RequestBuilder {
         match &self.config.auth_method {
-            AuthMethod::BasicAuth { username, password } => {
-                request.basic_auth(username, Some(password))
-            }
+            AuthMethod::BasicAuth {
+                username,
+                password,
+            } => request.basic_auth(username, Some(password)),
             _ => request,
         }
     }
@@ -33,8 +43,13 @@ impl ProviderHandler for SeatGeekHandler {
             if let Ok(body) = response.text().await {
                 if let Ok(json) = serde_json::from_str::<Value>(&body) {
                     let event_id = json["id"].as_str().unwrap_or("").to_string();
-                    let price = json["stats"]["lowest_price"].as_str().map(|p| p.to_string());
-                    return Some(ProviderResponse { event_id, price });
+                    let price = json["stats"]["lowest_price"]
+                        .as_str()
+                        .map(|p| p.to_string());
+                    return Some(ProviderResponse {
+                        event_id,
+                        price,
+                    });
                 }
             }
         }
@@ -44,10 +59,12 @@ impl ProviderHandler for SeatGeekHandler {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use reqwest::Client;
-    use dotenv::dotenv;
     use std::env;
+
+    use dotenv::dotenv;
+    use reqwest::Client;
+
+    use super::*;
 
     #[tokio::test]
     async fn test_seatgeek_handler_live() {

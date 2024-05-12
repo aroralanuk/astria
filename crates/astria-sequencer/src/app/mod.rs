@@ -103,7 +103,11 @@ use crate::{
     transaction::{
         self,
         InvalidNonce,
-    }, ve::{oracle::Oracle, types::OracleVoteExtension},
+    },
+    ve::{
+        oracle::Oracle,
+        types::OracleVoteExtension,
+    },
 };
 
 /// The inter-block state being written to by the application.

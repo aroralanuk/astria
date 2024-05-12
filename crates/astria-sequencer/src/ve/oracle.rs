@@ -1,15 +1,18 @@
-use reqwest::Client;
 use std::collections::HashMap;
-use tokio::sync::RwLock;
-use crate::provider::base::{AuthMethod, ProviderHandler};
 
+use reqwest::Client;
+use tokio::sync::RwLock;
+
+use crate::provider::base::{
+    AuthMethod,
+    ProviderHandler,
+};
 
 pub struct Oracle {
     client: Client,
     providers: Vec<Box<dyn ProviderHandler + Send + Sync>>,
     prices: RwLock<HashMap<String, String>>,
 }
-
 
 impl Oracle {
     pub fn new(providers: Vec<Box<dyn ProviderHandler + Send + Sync>>) -> Self {
