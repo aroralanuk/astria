@@ -3,8 +3,6 @@ pub(crate) mod test_utils;
 #[cfg(test)]
 mod tests_app;
 #[cfg(test)]
-mod tests_breaking_changes;
-#[cfg(test)]
 mod tests_execute_transaction;
 
 use std::{
@@ -105,7 +103,7 @@ use crate::{
     transaction::{
         self,
         InvalidNonce,
-    },
+    }, ve::{oracle::Oracle, types::OracleVoteExtension},
 };
 
 /// The inter-block state being written to by the application.
@@ -1019,7 +1017,7 @@ impl App {
         let mut state_tx = StateDelta::new(self.state.clone());
         let mut arc_state_tx = Arc::new(state_tx);
 
-        let provider_urls = &["https://api.seatgeek.com/2/events/6109434"];
+        let provider_urls = vec![];
 
         let oracle = Oracle::new(provider_urls);
 
@@ -1027,7 +1025,7 @@ impl App {
         oracle.fetch_prices().await;
 
         // Get the current prices
-        let prices = oracle.prices().await;
+        let prices = oracle.get_prices().await;
 
         // Print the prices
         println!("Current prices: {:?}", prices);

@@ -16,6 +16,7 @@ pub mod metrics_init;
 #[cfg(feature = "mint")]
 pub(crate) mod mint;
 pub(crate) mod proposal;
+pub(crate) mod provider;
 pub(crate) mod sequence;
 mod sequencer;
 pub(crate) mod service;

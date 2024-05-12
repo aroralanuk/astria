@@ -29,12 +29,6 @@ pub(crate) struct Consensus {
     app: App,
 }
 
-pub(crate) struct Consensus {
-    queue: mpsc::Receiver<Message<ConsensusRequest, ConsensusResponse, tower::BoxError>>,
-    storage: Storage,
-    app: App,
-}
-
 impl Consensus {
     pub(crate) fn new(
         storage: Storage,
@@ -474,6 +468,7 @@ mod test {
                 native_asset_base_denomination: DEFAULT_NATIVE_ASSET_DENOM.to_string(),
                 ibc_params: penumbra_ibc::params::IBCParameters::default(),
                 allowed_fee_assets: vec![DEFAULT_NATIVE_ASSET_DENOM.to_owned().into()],
+                fees: default_fees(),
             }
         }
     }

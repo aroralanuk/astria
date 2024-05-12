@@ -26,6 +26,7 @@ telemetry = { package = "astria-telemetry", path = "../astria-telemetry", featur
 
 anyhow = "1"
 borsh = { version = "1", features = ["derive"] }
+derive-new = "0.5"
 matchit = "0.7.2"
 priority-queue = "2.0.2"
 tower = "0.4"
@@ -36,6 +37,7 @@ cnidarium-component = { git = "https://github.com/penumbra-zone/penumbra.git", r
 
 async-trait = { workspace = true }
 bytes = { workspace = true }
+dotenv = "0.15.0"
 ed25519-consensus = { workspace = true }
 futures = { workspace = true }
 hex = { workspace = true, features = ["serde"] }
